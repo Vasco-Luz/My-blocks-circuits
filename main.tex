@@ -7,6 +7,7 @@
 \usepackage{float}
 \usepackage{svg}
 \svgsetup{inkscapeexe=inkscape}
+\svgpath{{./Images/}}  % Set the path for SVGs
 \usepackage{amsmath}
 \usepackage{hyperref} % For clickable links
 
@@ -29,7 +30,7 @@ VA001 is a Basic self bias Miller Operational transcondutance amplifier, exempli
 %O start up esta mau, tem de ser alterado
 \begin{figure}[H]
         \centering
-        \includesvg[width=1\textwidth]{./Images/VA001.svg}
+        \includesvg[width=1\textwidth]{VA001.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
         \label{OP}
 \end{figure}
@@ -137,7 +138,7 @@ Parametric simulations, based on the previously shown equations, should be perfo
 VA002 is a two stage amplifier with some different tricks
 \begin{figure}[H]
         \centering
-        \includesvg[width=1\textwidth]{./Images/VA002.drawio.svg}
+        \includesvg[width=1\textwidth]{VA002.drawio.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
         \label{OP}
 \end{figure}
@@ -169,7 +170,7 @@ Its important to make so all transistors are in the saturation region.  Parametr
 Low power amplifier two stage amplifier topology, is made to work with a $V_{DD}$ close to the $V_{TH}$ of transistors, meaning that all transistors need to be in subtreshold region in ordert o work properly.
 \begin{figure}[H]
         \centering
-        \includesvg[width=1\textwidth]{./Images/LO_001.drawio.svg}
+        \includesvg[width=1\textwidth]{LO_001.drawio.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
         \label{OP}
 \end{figure}
