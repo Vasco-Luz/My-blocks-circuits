@@ -25,7 +25,7 @@
 
 
 \section{VA001}
-VA001 is a Basic self bias Miller Operational transcondutance amplifier, exemplified in Fig. 1.
+VA001 is a Basic self bias Miller Operational transcondutance amplifier, exemplified in Fig. \ref{VA001}.
 
 
 %O start up esta mau, tem de ser alterado
@@ -33,17 +33,14 @@ VA001 is a Basic self bias Miller Operational transcondutance amplifier, exempli
         \centering
         \includesvg[width=1\textwidth]{VA001.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
-        \label{OP}
+        \label{VA001}
 \end{figure}
-\subsection{Amplifier explanation}
+\subsection{Circuit explanation}
 $P_1 - P_2$, $N_1 - N_4$, and $R_1$ form the biasing cell, functioning as a PTAT current bias generator.  
 
 The proportional relationship comes from $N_3$ having a transconductance four times lower than that of $N_4$. As temperature increases, $V_{GS_3}$ rises, which increases the current through $N_4$ due to its higher transconductance, as both gates are connected. The current mirrors formed by $P_1$ and $P_2$ ensure equal currents, establishing an internal feedback loop. Transistors $N_1$ and $N_2$ limit the voltage across $N_3$ and $N_4$, thereby improving the PSRR. Additionally, $R_1$ introduces degeneration in $N_4$, allowing for better control over the reference current and transconductance.
 
 To maximize PSRR and minimize unwanted feedback from the amplifier to the bias cell, the transistor sizes should not be excessively large, but minimum size transistors should be avoided at all cost, transistor with L or W close to the minimum size have a current curve with very prominent short channel effects that can impact a circuit very negatively, suffer more from hot carrier degradation and are very susceptible to random variation during fabrication. 
-
-
-
 
 
 By assuming an initial condition of $V_{IN+} = V_{IN-} = V_{DD}/2$ every node in the circuit is fixed at some DC voltage value.  theoretical its assumed that $V_{OUT}=V_{DD}/2$ in this condition.
@@ -53,9 +50,6 @@ Focusing on the first stage, a change in $V_{IN+}$ equal to $\Delta V_{IN+}$ occ
 
 
 Since $N_5$ is diode-connected, the current variation $\Delta I_{PAIR-}$ causes a corresponding $\Delta V_{GS_{N5}}$, which is proportional to $\Delta V_{IN+} \times g_{mP5}  \times R_{oN5}$.  Because $N_6$ shares the same gate potential, its output impedance inversely varies with $\Delta V_{IN+}$,  leading to a gain variation with $\Delta V_{IN+}$. While this typically poses no issue in a closed-loop configuration and a relatively small signal amplification, where the gain is stabilized by feedback, this variation introduces significant distortion in the output signal in open-loop configurations.
-
-
-
 
 
 Since \( V_{\text{DS}_{N6}} = V_{\text{GS}_{N8}} \), any variation at this node is subsequently amplified through a common-source amplifier in the second stage. Assuming that \( P_4 \) remains in saturation during steady-state operation, \( I_{\text{BIAS2}} \) is considered constant, with channel-length modulation effects being negligible. Given that the second-stage input transistor \( N_8 \) also operates in saturation under steady-state conditions, any change in \( V_{\text{GS}_{N8}} \) induces a significant variation in \( V_{\text{DS}_{N8}} \), or equivalently, \( V_{\text{OUT}} \).  This variation can be quantified as \( -g_{\text{m}_{N8}} \left( R_{\text{o}_{P4}} \parallel R_{\text{o}_{N8}} \right) \).
@@ -72,7 +66,7 @@ A_d \approx  g_{mP5}(R_{0P5}//R_{0N6})\times g_{mN8}(R_{0P4}//R_{0N8}).
 Due to its structure, the second stage provides a significantly larger output swing than the previous stage while maintaining a similar gain. However, since the gain is absolute rather than differential, using it alone makes it more susceptible to distorted output signals. 
 
 
-Unlike the previously discussed amplifiers, this amplifier is significantly affected by input CMV variations, as it lacks an auxiliary circuit to regulate it. The common-mode variation originates from changes in $I_{bias1}$ as a function of the input CMV. When the common-mode voltage fluctuates, the $V_{DS}$ of the input differential pair also changes, leading to a voltage shift at the common node of the input pair. 
+This amplifier is significantly affected by input CMV variations, as it lacks an auxiliary circuit to regulate it. The common-mode variation originates from changes in $I_{bias1}$ as a function of the input CMV. When the common-mode voltage fluctuates, the $V_{DS}$ of the input differential pair also changes, leading to a voltage shift at the common node of the input pair. 
 
 This shift induces a $\Delta I_{bias1}$, which depends on the output impedance of the current source and is influenced by the channel-length modulation parameter, $\lambda$.
 Since the DC output voltage is largely determined by the bias current when $I_{PAIR+} = I_{PAIR-}$, any changes in the input CMV result in variations in the output voltage. This variation depends on the impedance of the differential pair and the active load. The CMRR quantifies the amplifier’s ability to reject common-mode signals, and it is defined as the ratio between the differential gain and the common-mode gain.
@@ -136,14 +130,14 @@ Parametric simulations, based on the previously shown equations, should be perfo
 
 
 \section{VA002}
-VA002 is a two stage amplifier with some different tricks
+VA002 is a two stage amplifier with some different tricks, shown in Fig. \ref{VA002}.
 \begin{figure}[H]
         \centering
         \includesvg[width=1\textwidth]{VA002.drawio.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
-        \label{OP}
+        \label{VA002}
 \end{figure}
-\subsection{Amplifier explanation}
+\subsection{Circuit explanation}
 $P_1 - P_2$, $N_1 - N_4$, and $R_1$ form the biasing cell, functioning as a PTAT current bias generator.  The transcondutance cell is a variation off the previously used transcondutance cell.
 
 The proportional relationship comes from $N_3$ having a transconductance four times lower than that of $N_4$. As temperature increases, $V_{GS_3}$ rises, which increases the current through $N_4$ due to its higher transconductance, as both gates are connected. The current mirrors formed by $P_1$ and $P_2$ ensure equal currents, establishing an internal feedback loop. Transistors $N_1$ and $N_2$ limit the voltage across $N_3$ and $N_4$, thereby improving the PSRR. Additionally, $R_1$ introduces degeneration in $N_4$, allowing for better control over the reference current and transconductance.
@@ -164,21 +158,65 @@ Its important to make so all transistors are in the saturation region.  Parametr
 
 \section{VA003}
 
+VA003 is a Basic self bias Miller Operational amplifier, exemplified in Fig. \ref{VA003}.
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{VA003.svg}
+        \caption{proposed self bias two stage operational transcondutance amplifier.}
+        \label{VA003}
+\end{figure}
 
+
+
+\subsection{Circuit explanation}
+$P_1 - P_2$, $N_1 - N_4$, and $R_1$ form the biasing cell, functioning as a PTAT current bias generator.  The transcondutance cell is a variation off the previously used transcondutance cell.
+
+The proportional relationship comes from $N_3$ having a transconductance four times lower than that of $N_4$. As temperature increases, $V_{GS_3}$ rises, which increases the current through $N_4$ due to its higher transconductance, as both gates are connected. The current mirrors formed by $P_1$ and $P_2$ ensure equal currents, establishing an internal feedback loop. Transistors $N_1$ and $N_2$ limit the voltage across $N_3$ and $N_4$, thereby improving the PSRR. Additionally, $R_1$ introduces degeneration in $N_4$, allowing for better control over the reference current and transconductance.
+
+
+$P_3-P_4$ form the active load of the first stage, $N_5-N_6$ form the input stage and $N_7$ the current source.
+Since the output stage has a unitary gain, the inputs of this amplifiers are switches so $V_{OUT}$ of the first stage is directly proportional to the gain of the first stage, meaning the gain of the first stage is expressed as
+\begin{equation}
+    A_{V1stage} \approx g_{mN5} \times (R_{0N6}||R_{0P4})
+\end{equation}
+The proportional result comes from the fact that in this case the current change is directly copied trough the active load, creating a variation of impedance on $P_4$ and a variation of $I_{Pair-}$ that is dependent on the transcondutance of the differential pair and in $\Delta V_{IN+}$
+
+$P_5 - P_6$, $R_2$ and $N_8$ forms the voltage bias of the output stage. Its a standard low voltage current mirror, the resistor is implemented to reduce the overall $V_{ds}$ of the two PMOS.
+
+The transistors $P_7$ to $P_{11}$ form the output stage of the amplifier. The intended advantage of this output stage is improved linearity compared to traditional source follower stages. However, in practice, I found that it did not perform optimally in the \ac{TSMC65} and \ac{SKY130A} processes.
+
+The design relies on both $P_{10}$ and $P_{11}$ operating in the saturation region, with $V_{DS_{P11}}$ varying according to $V_{OUT}$, while $V_{DS_{P10}}$ remains constant. Since $P_9$ is also diode-connected, it establishes a constant $V_{DS}$, assuming a constant bias current. This configuration increases the threshold voltage $V_{TH}$ of $P_{10}$, effectively lowering its $V_{DSAT}$, which enables both transistors to remain in saturation( $P_{10}$ and $P_{11}$). This setup reduces the overall $V_{DS}$ across both transistors, thereby minimizing the effects of channel-length modulation effect therefore increasing supposedly the linearity of the buffer at the cost of output swing.
+The most important metric is keeping
+\begin{equation}
+    \Delta V_{TH} > V_{DSAT_{P10}}.
+\end{equation}
+But overall the design is not very good design. Is just  a relic of the past since an $AB$ output stage is far better, yet a little more complex to implement.
+
+
+\subsection{Design methodology}
+Overall, the design methodology for the transconductance cell closely follows that of the previously discussed amplifiers.
+
+In the first stage, the aim is to maximize the transconductance of the differential pair for a given current load and to design the active load to achieve the desired target value. This is generally accomplished through parametric simulations.
+
+For the output stage, the approach begins with setting the output bias to achieve the desired $V_{DS}$ for the PMOS current mirror. Next, the current mirrors are sized with an appropriate multiplicative factor to attain the target current. Then, the remaining PMOS transistors are designed based on the DC simulation, ensuring that the following condition holds:
+\begin{equation}
+    \Delta V_{TH} > V_{DSAT_{P10}}.
+\end{equation}
+To obtain a reasonably linear relation, the transistors typically need to have an excessive \( W/L \) ratio. In the \ac{SKY130A} process, this required a particularly large ratio to achieve a somewhat linear response. However, in the \ac{TSMC65} process, the amplifier could not be realized with satisfactory specifications.
 
 
 \section{LO001}
-Low power amplifier two stage amplifier topology, is made to work with a $V_{DD}$ close to the $V_{TH}$ of transistors, meaning that all transistors need to be in subtreshold region in ordert o work properly.
+Low power amplifier two stage amplifier topology, is made to work with a $V_{DD}$ close or lower to the $V_{TH}$ of transistors, meaning that all transistors need to be in subtreshold region in ordert o work properly.
 \begin{figure}[H]
         \centering
         \includesvg[width=1\textwidth]{LO_001.drawio.svg}
         \caption{proposed self bias two stage operational transcondutance amplifier.}
-        \label{OP}
+        \label{LOP001}
 \end{figure}
-\subsection{Amplifier explanation}
+\subsection{Circuit explanation}
 
 
-$P_1-P_3$ and $N_1-N_3$ serve as the bias generator. Is a variation of the standard ICTAT current generator, but since it works in the subtreshold region the current will increase with temperature because of the $V_T$ or thermal voltage exponential relation with temperature. This bias generator needs to be improved because the relation of the current is exponential PTAT relation that is not very good and causes problems with the amplifier at higher temperatures.
+$P_1-P_3$ and $N_1-N_3$ serve as the bias generator. Is a variation of the standard ICTAT(in sky130 case a current source of 15 nA is implemented for simplicity reasons) current generator, but since it works in the subthreshold region the current will increase with temperature because of the $V_T$ or thermal voltage exponential relation with temperature. This bias generator needs to be improved because the relation of the current is exponential PTAT relation that is not very good and causes problems with the amplifier at higher temperatures.
 
 But basically is 3 current mirrors, $P_1$ and $N_1$ generate the voltage of the transistor acting as a resistor, basically, $P_1$ drives a large current then $P_2$(a ratio of 2 or more), and $N_1$ is a diode connected transistors with the same gate as $N_2$. In order to control the impedance of the controlled resistor just change the ratio between $N_1$ and $N_2$, by increasing the ration, the resistance is decreased and the current increases, by decreasing the ratio, the current decreases and vice versa.
 
@@ -187,7 +225,7 @@ This techniques should be used in relation to resistors, because resistors tend 
 The first stage works by forcing a shift in $V_{TH}$ trough the body, it is composed of  $P_4-P_7$ and $N_4-N_7$, $N_6-N_7$ form the bias current sources, dependent on the current of the current reference and the current relation.
 This creates a variation of current in  $I_{P7}$ equal to $2*g_{mb_{P_{7}}} \times -\Delta V_{IN+}$ making the gain of the first stage being expressed as 
 \begin{equation}
-    A_d= -2*g_{mb_{P_{7}}} \times R_{0P_7}|| R_{0N_5}.
+    A_d= -2\times g_{mb_{P_{7}}} \times R_{0P_7}|| R_{0N_5}.
 \end{equation}
 With the second stage as a common source, the gain of the amplifier is expressed as
 \begin{equation}
