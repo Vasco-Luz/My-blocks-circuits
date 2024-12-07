@@ -201,7 +201,7 @@ For the output stage, the approach begins with setting the output bias to achiev
 \begin{equation}
     \Delta V_{TH} > V_{DSAT_{P10}}.
 \end{equation}
-To obtain a reasonably linear relation, the transistors typically need to have an excessive \( W/L \) ratio. In the \ac{SKY130A} process, this required a particularly large ratio to achieve a somewhat linear response. However, in the \ac{TSMC65} process, the amplifier could not be realized with satisfactory specifications.
+To obtain a reasonably linear relation, the transistors typically need to have an excessive \( W/L \) ratio. In the SKY130A process, this required a particularly large ratio to achieve a somewhat linear response. However, in the \ac{TSMC65} process, the amplifier could not be realized with satisfactory specifications.
 
 
 \section{LO001}
@@ -316,5 +316,164 @@ Meaning the amplifier as a gain expressed as
 \end{equation}
 
 This is achieved by ignoring the the channel modulation effect of the MOS transistors and by ignoring other effects in the Bipolar transistors.
+
+
+
+
+
+
+
+\newpage
+
+
+
+\section{audio003}
+
+audio003 is a  two stage single input amplifier, exemplified in Fig. \ref{audio003}.
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{audio003.pdf}
+        \caption{audio003 amplifier schematic.}
+        \label{audio003}
+\end{figure}
+
+\subsection{Circuit explanation}
+Its based on this paper A Low Noise integratedUnibi Amplifier With Novel Biasing Scheme and Structure.
+This is a two-stage amplifier that generates its own bias voltage through the DC feedback loop created by $D_1$ and $D_2$. Unfortunately, I could not implement this circuit using newer technologies (130 nm or 65 nm) the DC feedback loop doesn't work well with new technologies.  
+
+The circuit operates by utilizing $C_1$ with the diodes in inversion. The diodes act as large resistances when reverse-biased, creating a high-pass filter that removes the DC and low-frequency noise components of $V_{in}$. The DC voltage is generated as the DC output of the first stage. Since the diodes draw almost no current, the gate DC voltage of $N_2$ is equal to the collector voltage of $Q_1$ and $Q_2$. Capacitor $C_2$ removes the AC component of the first stage at the gate of $N_2$, effectively acting as a low-pass filter.  
+
+Assuming the DC operating point is fixed, all MOS transistors are in the saturation region, and all bipolar transistors are in the active region. When a variation in $V_{in}$ occurs, it induces a variation in the drain current of $N_2$. Since the current through $N_1$ remains relatively constant, the current shifts to $Q_1$. This current is further amplified by the Darlington configuration of $Q_2$, creating a current variation through $R_1$ approximately equal to
+\[
+-g_{mN2} \times \beta_1 - g_{mN2} \times \beta_1 \times \beta_2.
+\]  
+
+The total output impedance of the first stage can be expressed as
+\[
+R_1 \parallel R_{oQ2} \parallel (R_{oQ1} + R_{BEQ2}) \parallel \beta_3 \times \beta_4 \times R_3.
+\]  
+
+Since it is assumed that $R_3$ is significantly larger than the base-emitter resistance, $R_3$ multiplied by the $\beta$ values of $Q_3$ and $Q_4$ dominates the equivalent emitter resistance. 
+
+Giving a gain of the first stage equal to
+
+\begin{equation}
+    A_v = (-g_{mN2} \times \beta_1 - g_{mN2} \times \beta_1 \times \beta_2) \times (R_1 \parallel R_{oQ2} \parallel (R_{oQ1} + R_{BEQ2}) \parallel( \beta_3 \times \beta_4 \times R_3)).
+\end{equation}
+
+The base current variation of $Q_3$ (again ignoring the base-emitter resistance) can be expressed approximately as:  
+\[
+\frac{\Delta V_{\text{out1stage}}}{\beta_3 \times \beta_4 \times R_3},
+\]  
+which results in a total variation through $R_2$ of approximately:  
+\[
+\frac{\Delta V_{\text{out1stage}}}{(\beta_3 \times \beta_4 \times R_3)(\beta_3 + \beta_3 \times \beta_4)}.
+\]  
+
+The output impedance of the second stage can be expressed as:  
+\[
+R_2 \parallel \left(R_3 + \left(R_{oQ4} \parallel \left(R_{oQ4} + R_{BEQ2}\right)\right)\right),
+\]  
+making the gain of the second stage:  
+\[
+A_v = \frac{R_2 \parallel \left(R_3 + \left(R_{oQ4} \parallel \left(R_{oQ4} + R_{BEQ2}\right)\right)\right)}{(\beta_3 \times \beta_4 \times R_3)(\beta_3 + \beta_3 \times \beta_4)}.
+\]
+
+
+\section{AGC1}
+
+AGC1 is a  two stage single input amplifier, exemplified in Fig. \ref{audio004}. 
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=1\textwidth]{audio004.pdf}
+        \caption{AGC001 amplifier schematic.}
+        \label{audio004}
+\end{figure}
+\subsection{Circuit explanation}
+Now this is amplifier with a gain control mechanism in the form of $V_C$. It is based on a very old paper, A Wide-Band AGC Block Suitable fo’r Integrated Realization. 
+
+To start off, $C_1$ is a decoupling capacitor forming a high-pass filter to remove the DC component of $V_{IN}$. The relationship between $R_1$ and $R_2$ defines the bias point of $Q_1$. Resistor $R_3$ is chosen such that $R_3 \times \beta_1$ is much larger than $R_2$, minimizing the loading effect and keeping the bias point as close as possible to:  
+\[
+\frac{(V_{DD} - V_{SS}) \times R_1}{R_1 + R_2}.
+\]  
+
+Due to the inherent voltage drop of a common-collector amplifier (which is very close to the voltage drop of a diode, as both involve a PN junction), a diode is placed to ensure the left-side voltage of $N_1$ remains approximately equal to $V_{IN}$. This technique is commonly used in older bipolar circuit designs, particularly in simpler buffer circuits.
+
+Now, $R_4$ serves the purpose of providing current to the left side of $N_1$. $N_1$ operates in the triode region, functioning as a controllable resistor dependent on the value of $V_C$, enabling attenuation to be controlled. Depending on the value of $V_C$, the attenuation varies: higher resistance results in greater attenuation, while lower resistance results in less attenuation.
+
+The second stage is an unconventional differential pair configuration, where $R_8$ serves as the biasing mechanism for the differential pair. Since the differential pair is uncompensated and the $V_{BE}$ of $Q_3$ is always equal, the circuit essentially exhibits a positive gain relative to the input. The ratio between $R_3$ and $R_8$ controls the DC point of $V_{out}$. $R_6$ and $R_7$ define a theoretical DC point at the input of the second stage, but the lack of a decoupling capacitor significantly degrades the circuit. The addition of a decoupling capacitor greatly improves this circuit by isolating the actual DC points.
+
+This circuit suffers significantly from offset. However, offset does not seem to have been a critical concern in these older circuits, many of which perform poorly compared to modern designs.  
+
+A version of this circuit was implemented in LTspice using actual JFET transistors to mimic the paper design. In comparison to the paper, this amplifier functions as more than just a controllable attenuator. The amplifier works, and its gain is effectively controlled by $V_C$. It achieves a relatively good FFT performance for its type, although the FFT degrades as the gain decreases, which is due to the characteristics of JFET operation.
+
+
+
+
+
+
+
+
+
+\section{PDM001}
+
+
+PDM001 is a power switch driver for motor aplications Fig. \ref{PDM001}. 
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=0.4\textwidth]{PDM_driver.drawio.svg}
+        \caption{PDM001 driver schematic.}
+        \label{PDM001}
+\end{figure}
+
+
+\subsection{Circuit explanation}
+
+This is a primordial power circuit for integrated circuits intended for power applications. As with many primordial circuits, it is not particularly effective; however, it is a fun circuit to analyze.  
+A version of this circuit was implemented in LTspice.  
+
+It is based on the paper *Semiconductor Networks for Linear Amplification Using the Switching Mode*.  
+
+This is a solely bipolar circuit that can be implemented in a bipolar-only process. It works by inputting a positive and negative square wave at its input. If the input is positive, the upper switch is activated; if negative, the second switch is activated.  
+
+This circuit uses $V_{DD}$ as the positive supply, $V_{SS}$ as the negative supply, and ground as the reference. When the input voltage is positive, $Q_1$ has a positive $V_{BE}$ potential, meaning it is turned on. For $Q_1$ to operate in saturation, its collector voltage must be as close to $0 \, \text{V}$ as possible, with $V_{CE}$ around $100 \, \text{mV}$. Thus, the value of $R_1$ should be chosen relatively high to achieve this.  
+
+Another important factor is the negative $V_{SS}$. The negative $V_{SS}$ constrains the maximum input signal, for example, to approximately $1 \, \text{V}$. This ensures that the emitter voltage of $Q_1$ remains close to $0.3 \, \text{V}$ and the collector voltage of $Q_1$ is also close to $0.3 \, \text{V}$, as $Q_1$ is saturated. However, because $V_{SS}$ is negative, this $0.3 \, \text{V}$ is sufficient to bias $Q_4$. The value of $R_5$ is then used to control the current flow through the circuit.  
+
+Since the $V_C$ of $Q_1$ is very close to $0 \, \text{V}$, the base-emitter voltage of $Q_2$ is insufficient to turn it on, keeping $Q_2$ in the off state. As a result, the collector voltage of $Q_2$ is close to $V_{DD}$, causing $Q_3$ to turn on. This makes $V_{\text{OUT1}}$ equal to $V_{DD} - 0.7 \, \text{V}$, meaning the power switch associated with $Q_3$ is activated.  
+
+Meanwhile, the collector voltage of $Q_4$ is either below or very close to $0 \, \text{V}$, ensuring that $Q_5$ remains off, and consequently, $V_{\text{OUT2}}$ is $0 \, \text{V}$.  
+
+When $V_{\text{in}}$ is a negative voltage, $Q_1$ turns off because it has a negative $V_{BE}$ voltage. This results in a collector voltage close to $V_{DD}$, turning $Q_2$ on. Consequently, $Q_3$ turns off, and $V_{\text{OUT1}}$ becomes close to $0 \, \text{V}$.  
+
+On the lower side, the $V_{BE}$ of $Q_4$ is insufficient to turn it on, leaving $Q_4$ in the off state. Consequently, its collector voltage is close to $V_{DD}$, turning $Q_5$ on. This makes $V_{\text{OUT2}}$ equal to $V_{DD} - 0.7 \, \text{V}$, activating the second power switch.
+
+This circuit is relatively amusing to analyze and size, but it is not particularly effective due to the significant disadvantages of bipolar switches compared to FET switches. While the bipolar switches are not explicitly shown in the schematic, they are included in the LTSpice implementation and are present in the original paper.  
+
+To properly size this circuit, it is crucial to understand the relationship between the value of $V_{\text{IN}}$ and its effects on the various nodes. Notably, $D_5$ introduces a specific influence on the $V_{\text{OUT2}}$ voltage when $V_{\text{IN}}$ is negative.  
+
+
+
+
+
+\section{BIstable001}
+
+
+
+bistable001 is a bi stable circutit shown in Fig. \ref{bistable001}. 
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=0.4\textwidth]{bi_stable_circuit001.drawio.svg}
+        \caption{bistable001 driver schematic.}
+        \label{bistable001}
+\end{figure}
+
+\subsection{Circuit explanation}
+
+A version of this circuit was implemented in LTspice.  
+Based on this paper A simple integrated realization of a new bistable circuit
+
 
 \end{document}
