@@ -473,7 +473,57 @@ bistable001 is a bi stable circutit shown in Fig. \ref{bistable001}.
 \subsection{Circuit explanation}
 
 A version of this circuit was implemented in LTspice.  
-Based on this paper A simple integrated realization of a new bistable circuit
+Based on this paper A simple integrated realization of a new bistable circuit.
+
+This is a bistable circuit with a memory component. The memory component of this circuit is the $RC$ network composed of $R_2$ and $C_1$.  
+
+This circuit operates in two distinct states, which can be toggled by a sudden variation in $V_{\text{IN}}$. Such a change induces and forces the bistable circuit to switch states.  
+
+Starting with the initial state of the circuit, $Q_1$ is biased because its $V_{\text{BE}}$ exceeds $0.7 \, \text{V}$. This causes current to flow through the emitter, which equals the $I_{\text{D}}$ of $P_1$ (a PJFET). Consequently, $V_{\text{OUT}}$ settles at the voltage where its current matches the emitter current of $Q_1$, requiring it to be a negative voltage close to the $V_{\text{SS}}$ rail.  Now because if the network $R_2$ and $C_1$, the voltage of the base of $Q_1$ will be close to $V_{OUT} + 0.7$(in order for the voltage $V_{BE}$ voltage of $Q_1$ to be larger then 0.7).
+
+When a fast switching event occurs at $V_{\text{IN}}$ (from example -2 to 2 Volts), a current is injected at the drain of $P_1$. This causes the $V_{\text{DS}}$ of $P_1$ to experience a voltage variation.  
+
+This voltage variation forces $Q_1$ to shut off, reducing its emitter resistance to nearly zero. Consequently, $V_{\text{OUT}}$ approaches $V_{\text{DD}}$, and $P_1$ shuts down. It is important to note that the injected current resembles a pulse due to the presence of the input capacitor.  
+
+When the variation transitions from a positive to a negative value, the opposite occurs. A current is forced through ground, passing through $R_2$ into the base-emitter junction of $Q_1$, and then through $C_2$. This process forces $Q_1$ to turn on, thereby restoring the circuit to its original working state.  
+
+
+The amusing aspect of this circuit is that its operation is controlled by the switching velocity and the magnitude of the voltage change, which is converted into an input current pulse through $C_2$.  
+
+If the voltage switching occurs too slowly, the circuit will fail to switch states and will remain in its saved state. This behavior makes it a rather unusual memory circuit.  
+
+As with the previous circuits, it is not particularly practical or useful. However, it is an interesting design as it helps in exploring different circuit concepts.
+
+
+
+
+
+
+
+
+
+\section{analog switch01}
+
+
+
+analog switch01 is a FET driven switch with a bipolar driver circuit shown in Fig. \ref{analogswitch01}. 
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=0.4\textwidth]{analog_switching_circuit.drawio.svg}
+        \caption{analog switch01 schematic.}
+        \label{analogswitch01}
+\end{figure}
+
+\subsection{Circuit explanation}
+This circuit is based on the paper *An Integrated FET Analog Switch*.  
+As with the other circuits, a version has been implemented in LTspice.  
+
+This circuit is relatively simple. The driver consists of a PNP transistor, $Q_1$, the current-limiting resistors $R_1 - R_3$, the biasing capacitor $C_1$, the blocking diode $D_1$, and an NJFET, $N_1$.  
+
+When $V_{\text{in}}$ is negative (as PNP uses inverse logic), the $V_{\text{EB}}$ of $Q_1$ is biased, causing $Q_1$ to drive a current. Most of this current flows through $R_3$, while a portion flows through $C_1$, which biases the gate capacitance of $N_1$, turning it on. The capacitor $C_1$ and the diode $D_1$ serve protective roles for $N_1$: the capacitor ensures no DC current flows into the FET, and the diode removes the gate charge when the FET turns off. These components are unnecessary when using an NMOS device.  
+
+When $V_{\text{in}}$ transitions to a positive voltage close to $V_{\text{DD}}$, $Q_1$ turns off, causing the collector voltage of $Q_5$ to equal $V_{\text{SS}}$. During the switch-off process, $D_1$ discharges the gate capacitance of $N_1$, bringing the gate voltage below $V_{\text{SS}}$, and $N_1$ turns off.  
 
 
 \end{document}
