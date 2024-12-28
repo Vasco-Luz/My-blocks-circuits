@@ -267,18 +267,45 @@ audio001 is a basic one stage single input amplifier, exemplified in Fig. \ref{a
 
 In order to increase the input impedance of the common emitter amplifier, an NMOS is used as the input,  with is $I_{DS}$ being equal to the base current of Q1, effectively reducing the input impedance by a large amount compared to a case were the input is directly connected to the base of Q1.
 
-When a voltage variation happens at the gate of N1, it causes a variation of $I_{B}$ equal to $\Delta V_{IN} \times g_{N1}$.
+
+The DC point of $V_{OUT}$ can be defined as
+\[
+    V_{OUT} = V_{DD} - R_1 \times \beta_1 \times (V_{in}-Vth_{N1})^2 \times \frac{K_{N1}}{2}
+\]
+where $V_{TH}$ is the sum of $V_{TH0}$ plus the body effect. This is only possible if $V_{in}>V_{TH}$ or $V_{OUT}>V_{CE_{min}}$.
+If $V_{in}<V_{TH}$ then
+\[
+    V_{OUT} \approx V_{DD}
+\]
+and $N_1$ is in the subthreshold region and its current its too low to start off $Q_1$
+And if $V_{OUT}<V_{CE_{min}}$ then 
+\[
+    V_{OUT} \approx V_{CE}
+\]
+and $Q_1$ is saturated.
+
+
+Analysing the circuit in the AC domain, when a voltage variation happens at the gate of N1, it causes a variation of $I_{B}$ equal to $\Delta V_{IN} \times g_{N1}$.
 This causes a current variation of $I_{C}$ equal to $\beta_1 \times \Delta I_{B}$. Making so the overall transcondutance of the amplifier being equal to $g_{N1} \times \beta_1 $. 
 Since the output impedance of the amplifier is approximately the value of $R_{1}$ in parallel with the output impedance of Q1, the gain equation of this amplifier can be expressed as
 \begin{equation}
     Av = - g_{N1} \times \beta_1 \times (R_1||R_{0Q1}).
 \end{equation}
 
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{audio001_small_signal_diagram.drawio.svg}
+        \caption{audio001 amplifier ac gain block diagram.}
+        \label{audio001_dig}
+\end{figure}
+
+
+
 The primary issue with this amplifier lies in its non-differential input stage, which makes designing a feedback system for a closed-loop configuration significantly more challenging. A closed-loop system reduces harmonic distortion in the output waveform by maintaining consistent gain across the input range, unlike an open-loop system.
 
-Nowadays, such amplifiers are rarely used for practical applications due to these limitations. However, they remain an important part of electronics history and serve as valuable teaching tools for beginners.
+Nowadays, such amplifiers are rarely used alone due to these limitations and because bipolars are generally only used in bandgap circuits. However, they remain an important part of electronics history and serve as valuable teaching tools for beginners.
 
-One major trade-off is the degeneration caused by the body effect in the NMOS transistor. Additionally, there is a trade-off stemming from the differing temperature coefficient variations of MOS and bipolar devices. These differences can lead to significant shifts in the amplifier's operating point as a function of temperature, making it less stable than a common-emitter configuration using only an NPN transistor and a resistor.
+One major trade-off is the degeneration caused by the body effect in the NMOS transistor. Additionally, there is a trade-off stemming from the differing temperature coefficient variations of MOS , bipolar devices and resistances. These differences can lead to significant shifts in the amplifier's operating point as a function of temperature. Bipolar and MOS have inverse temperature coefficients, resistances temperature coefficient depends on how they are made.
 
 
 
@@ -296,33 +323,89 @@ audio002 is a basic one stage single input amplifier, exemplified in Fig. \ref{a
 \end{figure}
 
 \subsection{Circuit explanation}
+
+
 This amplifier uses again a PMOS input in order to increase the input impedance of the amplifier. In order to increase the gain, a triple Darlington arrangement is used in order to increase the gain current and to improve temperature variations in comparison to a standard Darlington arrangement.
 
 In this amplifier, in order to better define the initial operating point, the PMOS input stage is composed of two PMOS transistors: a current source PMOS ($P_2$) with its gate connected to $V_{SS}$, and an input PMOS with its gate connected to $V_{IN}$. This configuration ensures that the DC operating point is established through the relationship between the bias current of $P_2$ and the bias current of the base of $Q_1$.  
 
 Since $P_2$ operates in saturation, the variation in current caused by a $\Delta V_{in}$ is primarily directed to the base of $Q_1$, so its essential to increase the $L$ of $P_{2}$ in order to reduce the channel modulation effect.
 
- A degeneration is putted  at the emitter of $Q_3$ in order to make the gain relation more linear. The trade off is that the gain is smaller then a non-degenerated system.
+ A degeneration is putted  at the emitter of $Q_3$ in order to make the gain relation more linear and to increase the input impedance. The trade off is that the gain is smaller then a non-degenerated system, as the current gain will be naturally smaller.
+
+
+
+Analyzing the circuit in the DC domain, first $V_{DD} -V_{IN} > V_{TH}$ in order for $P_1$ to be on, if not $V_{OUT} \approx V_{DD}$
+Then the value of $V_{SD_{P2}}$ needs to be found, one to understand if $P_1$ is in saturation and to understand if $V_S{D_{P2}} > 3 \times 0.7$.
+To start it is assumed $V_{SD_{P2}} >  3 \times 0.7$ and $V_{SG_{P1}}<V_{SD_{P1}}$, then
+
+\[
+    (V_{DD} - V_{IN} -VTH_{P1})^2 \times K_{P1}/2 = (V_{SD_{P2}} -VTH_{P2})^2 \times K_{P2}/2 + \frac{V_{SD_{P2}}}{(\beta_1+1) \times ((\beta_2 +1)(R_2 \times (\beta_3 +1) ))}.
+\]
+
+By solving this equation the value of $V_{SD_{P2}}$. If $V_{SD_{P2}} < 3 \times 0.7$ and $ V_{DD} - V_{IN} - Vth_{P1} < V_{DD} - V_{SD_{P2}}$, then
+
+\[
+    (V_{DD} - V_{IN} -VTH_{P1})^2 \times K_{P1}/2 = (V_{SD_{P2}} -VTH_{P2})^2 \times K_{P2}/2.
+\]
+
+And if $ V_{DD} - V_{IN} - Vth_{P1} > V_{DD} - V_{SD_{P2}}$ then 
+\[
+    (2 \times (V_{DD} - V_{IN}) \times V_{SD_{P1}} - V_{SD_{P1}}^2) \times K_{P1} = (V_{SD_{P2}} -VTH_{P2})^2 \times K_{P2}/2.
+\]
+
+Now assuming normal working conditions with $V_{SD_{P2}} > 3 \times 0.7$ and   $ V_{DD} - V_{IN} - Vth_{P1} < V_{DD} - V_{SD_{P2}}$, $IB_{Q3}$ can be expressed as
+
+ \[
+    IB_{Q3} = (\frac{V_{SD_{P2}}}{(\beta_1+1) \times ((\beta_2 +1)(R_2 \times (\beta_3 +1) ))} \times (\beta_1 + 1) ) \times (\beta_2 + 1).
+\]
+
+Since $IC_{Q3} = \beta_3 * IB_{Q3}$, $V_{OUT}$ can be expressed as
+
+
+ \[
+    V_{OUT} = V_{DD} - \beta_3 \times ((\frac{V_{SD_{P2}}}{(\beta_1+1) \times ((\beta_2 +1)(R_2 \times (\beta_3 +1) ))} \times (\beta_1 + 1) ) \times (\beta_2 + 1)).
+\]
+
+
 
  The output impedance of the system is $R_1 || (R_{0Q3}+R_2)$
 
- In order to find the output transcondutance of the system, first the current gain of $P_1$ must be expressed.
- To better find the transcondutance its important to understand the equivalent emitter resistance in comparison to the driving signal. The emitter resistance can be broth up to the base by multiplying its value by $\beta$. Meaning in a small signal equivalent circuit, the equivalent resistance can be expressed approximately as $R_2 \times \beta_{Q1} \times \beta_{Q2} \times \beta_{Q3}$. Since the source of $P_2$ is connected to the node that varies with the total NPN current, the total transcondutance of the system can be expressed as
+ Viewing the system in AC, in order to find the output transcondutance of the system, first the current gain of $P_1$ must be expressed.
+ To better find the transcondutance its important to understand the equivalent emitter resistance in comparison to the driving signal. The emitter resistance can be broth up to the base by multiplying its value by $\beta$. Meaning in a small signal equivalent circuit, the equivalent resistance can be expressed approximately as $R_2 \times \beta_{Q1} \times \beta_{Q2} \times \beta_{Q3}$. Since the source of $P_2$ is connected to the node that varies with the total NPN current, the total transcondutance of the system can be expressed aproximatly as 
  
- \begin{equation}
-     g_{mP1} (1 - g_{mbP2} \times R_2 \times \beta_{Q1} \times \beta_{Q2} \times \beta_{Q3} ) .
- \end{equation}
-Meaning the amplifier as a gain expressed as
+\begin{align}
+   &\frac{-g_{mP1} \times \bigg(R0_{P1} \parallel  
+   \bigg(\frac{1}{g_{mP2} + g_{mbP2} + \frac{1}{R0_{P2}}}\bigg) \parallel  
+   \bigg((\beta_1+1) \times \big((\beta_2 +1)(R_2 \times (\beta_3 +1))\big)\bigg)\bigg)} 
+   {(\beta_1+1) \times \big((\beta_2 +1)(R_2 \times (\beta_3 +1))\big)} \nonumber \\
+   &\quad \times (\beta_1+1) \times (\beta_2 +1) \times \beta_3
+\end{align}
 
-\begin{equation}
-    A_v \approx          \beta_{Q1} \times \beta_{Q2} \times \beta_{Q3} \times g_{mP1} (1 - g_{mbP2} \times R_2 \times \beta_{Q1} \times \beta_{Q2} \times \beta_{Q3}) \times R_1 || (R_{0Q3}+R_2)
-\end{equation}
+Meaning the amplifier has a gain expressed as:
+
+\begin{align}
+    A_v \approx &\frac{-g_{mP1} \times \bigg(R0_{P1} \parallel  
+    \bigg(\frac{1}{g_{mP2} + g_{mbP2} + \frac{1}{R0_{P2}}}\bigg) \parallel  
+    \bigg((\beta_1+1) \times \big((\beta_2 +1)(R_2 \times (\beta_3 +1))\big)\bigg)\bigg)} 
+    {(\beta_1+1) \times \big((\beta_2 +1)(R_2 \times (\beta_3 +1))\big)} \nonumber \\
+    &\quad \times (\beta_1+1) \times (\beta_2 +1) \times \beta_3 \times \big(R_1 \parallel (R_{0Q3} + R_2)\big)
+\end{align}
+
+
+
+
 
 This is achieved by ignoring the the channel modulation effect of the MOS transistors and by ignoring other effects in the Bipolar transistors.
 
 
 
-
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{audio002_ac_diagram.drawio.svg}
+        \caption{audio002 amplifier block diagram.}
+        \label{audio002_diag}
+\end{figure}
 
 
 
@@ -366,11 +449,11 @@ Giving a gain of the first stage equal to
 
 The base current variation of $Q_3$ (again ignoring the base-emitter resistance) can be expressed approximately as:  
 \[
-\frac{\Delta V_{\text{out1stage}}}{\beta_3 \times \beta_4 \times R_3},
+\frac{\Delta V_{\text{out1stage}}}{(\beta_3 + 1) \times (\beta_4 + 1) \times R_3},
 \]  
 which results in a total variation through $R_2$ of approximately:  
 \[
-\frac{\Delta V_{\text{out1stage}}}{(\beta_3 \times \beta_4 \times R_3)(\beta_3 + \beta_3 \times \beta_4)}.
+\frac{\Delta V_{\text{out1stage}}}{((\beta_3 + 1) \times (\beta_4 + 1) \times R_3)((\beta_3 + 1) \times \beta_4)}.
 \]  
 
 The output impedance of the second stage can be expressed as:  
@@ -379,8 +462,22 @@ R_2 \parallel \left(R_3 + \left(R_{oQ4} \parallel \left(R_{oQ4} + R_{BEQ2}\right
 \]  
 making the gain of the second stage:  
 \[
-A_v = \frac{R_2 \parallel \left(R_3 + \left(R_{oQ4} \parallel \left(R_{oQ4} + R_{BEQ2}\right)\right)\right)}{(\beta_3 \times \beta_4 \times R_3)(\beta_3 + \beta_3 \times \beta_4)}.
+A_v = \frac{R_2 \parallel \left(R_3 + \left(R_{oQ4} \parallel \left(R_{oQ4} + R_{BEQ2}\right)\right)\right)}{((\beta_3 + 1) \times (\beta_4 + 1) \times R_3)((\beta_3 + 1) \times \beta_4)}.
 \]
+
+
+
+
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{audio003_ac_block.drawio.svg}
+        \caption{audio003 amplifier block diagram.}
+        \label{audio003_diag}
+\end{figure}
+
+
+
 \newpage
 
 \section{AGC1}
@@ -524,7 +621,7 @@ As with the other circuits, a version has been implemented in LTspice.
 
 This circuit is relatively simple. The driver consists of a PNP transistor, $Q_1$, the current-limiting resistors $R_1 - R_3$, the biasing capacitor $C_1$, the blocking diode $D_1$, and an NJFET, $N_1$.  
 
-When $V_{\text{in}}$ is negative (as PNP uses inverse logic), the $V_{\text{EB}}$ of $Q_1$ is biased, causing $Q_1$ to drive a current. Most of this current flows through $R_3$, while a portion flows through $C_1$, which biases the gate capacitance of $N_1$, turning it on. The capacitor $C_1$ and the diode $D_1$ serve protective roles for $N_1$: the capacitor ensures no DC current flows into the FET, and the diode removes the gate charge when the FET turns off. These components are unnecessary when using an NMOS device.  
+When $V_{\text{in}}$ is negative (as PNP uses inverse logic), the $V_{\text{EB}}$ of $Q_1$ is biased, causing $Q_1$ to drive a current. Most of this current flows through $R_1$, while a portion flows through $C_1$, which biases the gate capacitance of $N_1$, turning it on. The capacitor $C_1$ and the diode $D_1$ serve protective roles for $N_1$: the capacitor ensures no DC current flows into the FET, and the diode removes the gate charge when the FET turns off. These components are unnecessary when using an NMOS device.  
 
 When $V_{\text{in}}$ transitions to a positive voltage close to $V_{\text{DD}}$, $Q_1$ turns off, causing the collector voltage of $Q_5$ to equal $V_{\text{SS}}$. During the switch-off process, $D_1$ discharges the gate capacitance of $N_1$, bringing the gate voltage below $V_{\text{SS}}$, and $N_1$ turns off.  
 
@@ -558,13 +655,13 @@ where $\beta_1 = \beta_2$ and $0.7$~V is the $V_{\text{BE}}$ required to bias th
 
 Assuming a state where both collector currents are equal (they are not in reality because $V_{\text{CE}}$ of both $Q_1$ and $Q_2$ is different, causing some offset current), the bias setpoint of the output of the first stage can be defined as  
 \[
-\frac{I_{\text{Bias}}}{2} \times R_1.
+V_{DD} - \frac{I_{\text{Bias}}}{2} \times R_1.
 \]  
 Due to the next stage, this voltage, as a rule of thumb, needs to be lower than $V_{\text{DD}}$ by a value larger than $0.7$~V in order to bias $Q_3$, which is a PNP bipolar transistor.  
 
 Regarding $R_3$, to minimize its input impedance, the condition $R_3 \cdot \beta_3 \gg R_1$ must hold. The collector current of $Q_3$, $I_{\text{CQ3}}$, equals  
 \[
-I_{\text{CQ3}} = \beta_3 \times \frac{V_{\text{DD}} - 0.7 - V_{\text{CQ1}}}{R_3}.
+I_{\text{CQ3}} \approx  \frac{V_{\text{DD}} - 0.7 - V_{\text{CQ1}}}{R_3}.
 \]  
 
 Then, $R_4$ should be defined so that  
@@ -595,6 +692,22 @@ By multiplying the gains of the two stages, the overall gain of the amplifier ca
 g_{mQ_1} \cdot \left( R_1 \parallel R_{0Q_1} \parallel R_3 \cdot \beta_3 \right) \cdot g_{mQ_3} \cdot \left( (R_3 + R_{0Q_3}) \parallel R_4 \right).
 \]  
 
+
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{BIpolar_buffer_diagram.drawio.svg}
+        \caption{Bipolar buffer1  diagram block.}
+        \label{bipolarbuffer01dig}
+\end{figure}
+
+
+
+
+
+
+
+
 Since almost all two-stage amplifiers are unstable, a capacitor, $C_1$, is used to slow down the first stage and essentially make the amplifier stable. In control terms, it increases the distance between the two dominant poles.
 
 
@@ -611,7 +724,7 @@ A prototype was made in LTspice in the repository. Another was made in TSMC180BC
 
 
 
-Bipolar buffer2 is a two stage differential bipolar amplifier in buffer configuration in Fig. \ref{bipolarbuffer01}. 
+Bipolar buffer2 is a two stage differential bipolar amplifier in buffer configuration in Fig. \ref{bipolarbuffer02}. 
 
 \begin{figure}[H]
         \centering
@@ -662,8 +775,82 @@ It is important to note that the first integrated monolithic operational amplifi
 
 This amplifier was implemented in LTSPICE and the TSMC180BCD process. The LTSPICE design is publicly available in the repository.
 
+\newpage
+
+\section{RF001}
 
 
+
+RF001 bipolar TV receiver circuit in Fig. \ref{RF001 }. 
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{tv_receiver.drawio.svg}
+        \caption{RF001   schematic.}
+        \label{RF001 }
+\end{figure}
+
+\subsection{Circuit explanation}
+
+RF001 is one of the first integrated RF circuits. It was designed for use in old TV receivers.  
+
+It is based on the paper *INTEGRATED CIRCUITS IN TELEVISION RECEIVERS*. Without delving too much into the theory, the sound band carrier (41.25 MHz) and the picture wave carrier (45.75 MHz) are multiplied by each other (frequency modulated beat) to generate a lower frequency sinusoidal wave centered at 4.5 MHz. This 4.5 MHz sinusoidal wave is considered the input wave.  
+
+Generally speaking, these modulated waves have a very low amplitude and need to be amplified for further processing. In simple terms, this circuit amplifies the sinusoidal wave and shifts it by 90 degrees (quadrature) for subsequent processing.
+
+A design was made in LTspice and in TSMC180BCD process, generally doing bipolars in LTspice is far easier because of their higher $\beta$ compared to lateral bipolar in CMOS process. But doing circuits in virtuoso is far easier then in LTspice.
+
+To start off, the first part of the circuit involves the power management area composed of $D_1 - D_7$, $R_9$, $R_{10}$, $Q_9$, and $Q_{10}$.  
+
+In simple terms, the main $V_{DD}$ is too large, and in order to reduce it and generate other voltage references for the circuit, this section is used. To begin, a resistor in conjunction with the seven diodes is used to fix the base voltage of $Q_9$. Assuming each diode requires a voltage of 0.7 V and $R_9$ has a low value, the base voltage of $Q_9$ can be approximated as 4.9 V.  
+
+Because of the base-emitter junction of $Q_9$, this produces a reference current of approximately 4.2 V. The reference should be designed such that its value does not significantly change with consumption. To achieve this, a low value for $R_9$ is required.
+
+For the reference voltage, the same principle applies. Because the reference has four diodes, the base voltage will be approximately 2.8 V. Due to the inherent base-emitter voltage drop of all bipolars, this will generate a bias voltage of approximately 2.1 V.  
+
+In this case, $R_{10}$ needs to be relatively large in order to increase the input impedance of this stage, as this transistor itself will not be driving a large load.
+
+Starting with the first amplifier of the amplifying chain, it is composed of $Q_1$, $Q_2$, $Q_3$, $R_1$, $R_2$, and $R_3$. Essentially, it is a two-stage amplifier with a differential stage and an output stage.  
+
+Because it does not include the usual slewing stage, the first stage operates as a non-inverting stage, meaning the output is directly proportional to the output stage. This explains why the resistor is connected to the inverting input of the amplifier.
+
+
+
+To start, $V_{IN+}$ is DC biased by the reference voltage, and the AC input signal is coupled to a transistor. For this system to work properly, the DC voltage of $V_{IN-}$ must be very close to the DC value of $V_{IN+}$, and the output voltage of the second stage should also be very close to $V_{IN+DC}$.  
+
+To achieve this, $R_2 = 2 \cdot R_1$, and $R_3$ is chosen to be relatively high to increase the input impedance of $Q_3$. This configuration produces a voltage at $V_{C_{Q_2}}$ that is very close to $V_{IN+DC} + 0.7$. By applying the common collector stage, this $0.7$ V offset is removed, making the DC output very close to the input DC value.  
+
+Of course, this comes at the cost of a lower AC gain, but it is a trade-off that improves DC performance.
+
+For simplicity reasons the ac gain of the second stage is considered 1, so the ac gain of this stage can be considered equal to
+\[
+    A_v = R_2 \parallel R0_{Q2} \times \frac{\beta_1}{1 + \beta_1\times R_1}
+ \]
+
+
+The second stage is exactly the same as the first stage, with its output connected to the inverting input of the first stage. However, it is filtered through a low-pass filter to remove the AC component from the feedback loop. As stated before, the output will be very close to the input due to the resistor relationship. 
+
+There will be a slight difference because of the forward voltage phenomenon, but the variation will only be a few millivolts. Once again, the gain of this stage will be equal to the gain of the previous stage. The inverse input of this amplifier is equal to the voltage reference, that is exactly close to 2.1 V.
+
+Next is the final amplification stage, that is just a differential pair with an inductive load. again in this differential pair, $Q_8$ is connected again to the voltage reference that is 2.1.
+
+What this does is that the voltage gain is converted into a current variation through $I_{C_{Q_8}}$. Since its collector current is directly connected to a phase shift transformer, this will induce the same current variation in the secondary part of the transformer but shifted by 90° (in quadrature). 
+
+The secondary middle is connected to the voltage reference, meaning the DC current is biased. While the mutual inductance is not specified, theoretically this current variation will be input into the degenerated Darlington configuration, generating a current. 
+The second part is a FM detector, basicly is a frequency to voltage converter, with diodes actinas capacitors.
+
+This part could not be implemented correctly in LTspice or in Virtuoso.
+
+
+
+\begin{figure}[H]
+        \centering
+        \includesvg[width=1\textwidth]{RF001_AC_DIAGRAM.drawio.svg}
+        \caption{RF001 block diagram schematic.}
+        \label{RF001block }
+\end{figure}
+
+\newpage
 
 
 
